@@ -1,3 +1,0 @@
-[console_scripts]
-y5gg = y5gg.cli:app
-

@@ -392,7 +392,8 @@ class Detections:
                     class_ids.append(int(cls))
                     label = self.names[int(cls)]
                     labels.append(label)
-                    scores.append(conf)
+                    score = conf.cpu().data.numpy()
+                    scores.append(score)
             prediction = [bboxes, labels, scores, class_ids]
             predictions.append(prediction)
         if len(predictions)==1:
