@@ -18,7 +18,7 @@ def get_requirements():
 
 def get_version():
     current_dir = os.path.abspath(os.path.dirname(__file__))
-    version_file = os.path.join(current_dir, "yolov5", "__init__.py")
+    version_file = os.path.join(current_dir, "y5gg", "__init__.py")
     with io.open(version_file, encoding="utf-8") as f:
         return re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
 
@@ -26,14 +26,16 @@ def get_version():
 setuptools.setup(
     name="y5gg",
     version=get_version(),
-    author="GreenLabs",
-    author_email="chienlq@greenglobal.vn",
+    author="",
+    license="GPL",
     description="Packaged version of the Yolov5 object detector",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
     url="https://github.com/chienlq/y5gg",
+    packages=setuptools.find_packages(exclude=["tests"]),
     python_requires=">=3.6",
     install_requires=get_requirements(),
+    extras_require={"tests": ["pytest"]},
     include_package_data=True,
     options={'bdist_wheel':{'python_tag':'py36.py37.py38'}},
     classifiers=[
@@ -53,5 +55,9 @@ setuptools.setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Scientific/Engineering :: Image Recognition",
     ],
-    keywords="machine-learning, deep-learning, ml, pytorch, YOLO, object-detection, vision, YOLOv3, YOLOv4, YOLOv5"
+    keywords="machine-learning, deep-learning, ml, pytorch, YOLO, object-detection, vision, YOLOv3, YOLOv4, YOLOv5",
+    entry_points={'console_scripts': [
+        "y5gg=y5gg.cli:app",
+        ],
+                  }
 )
