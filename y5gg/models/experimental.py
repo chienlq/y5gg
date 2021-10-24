@@ -7,9 +7,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from yolov5.models.common import Conv
-from yolov5.utils.general import yolov5_in_syspath
-from yolov5.utils.downloads import attempt_download
+from y5gg.models.common import Conv
+from y5gg.utils.general import yolov5_in_syspath
+from y5gg.utils.downloads import attempt_download
 
 
 class CrossConv(nn.Module):

@@ -17,10 +17,10 @@ import torch.nn as nn
 from PIL import Image
 from torch.cuda import amp
 
-from yolov5.utils.datasets import exif_transpose, letterbox
-from yolov5.utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh, save_one_box
-from yolov5.utils.plots import colors, plot_one_box
-from yolov5.utils.torch_utils import time_sync
+from y5gg.utils.datasets import exif_transpose, letterbox
+from y5gg.utils.general import non_max_suppression, make_divisible, scale_coords, increment_path, xyxy2xywh, save_one_box
+from y5gg.utils.plots import colors, plot_one_box
+from y5gg.utils.torch_utils import time_sync
 
 LOGGER = logging.getLogger(__name__)
 

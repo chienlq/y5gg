@@ -27,22 +27,22 @@ from torch.optim import Adam, SGD, lr_scheduler
 from tqdm import tqdm
 
 
-import yolov5.val as val # for end-of-epoch mAP
-from yolov5.models.experimental import attempt_load
-from yolov5.models.yolo import Model
-from yolov5.utils.autoanchor import check_anchors
-from yolov5.utils.datasets import create_dataloader
-from yolov5.utils.general import labels_to_class_weights, increment_path, labels_to_image_weights, init_seeds, \
+import y5gg.val as val # for end-of-epoch mAP
+from y5gg.models.experimental import attempt_load
+from y5gg.models.yolo import Model
+from y5gg.utils.autoanchor import check_anchors
+from y5gg.utils.datasets import create_dataloader
+from y5gg.utils.general import labels_to_class_weights, increment_path, labels_to_image_weights, init_seeds, \
     strip_optimizer, get_latest_run, check_dataset, check_file, check_git_status, check_img_size, \
     check_requirements, print_mutation, set_logging, one_cycle, colorstr, methods, yolov5_in_syspath
-from yolov5.utils.downloads import attempt_download
-from yolov5.utils.loss import ComputeLoss
-from yolov5.utils.plots import plot_labels, plot_evolve
-from yolov5.utils.torch_utils import ModelEMA, select_device, intersect_dicts, torch_distributed_zero_first, de_parallel
-from yolov5.utils.loggers.wandb.wandb_utils import check_wandb_resume
-from yolov5.utils.metrics import fitness
-from yolov5.utils.loggers import Loggers
-from yolov5.utils.callbacks import Callbacks
+from y5gg.utils.downloads import attempt_download
+from y5gg.utils.loss import ComputeLoss
+from y5gg.utils.plots import plot_labels, plot_evolve
+from y5gg.utils.torch_utils import ModelEMA, select_device, intersect_dicts, torch_distributed_zero_first, de_parallel
+from y5gg.utils.loggers.wandb.wandb_utils import check_wandb_resume
+from y5gg.utils.metrics import fitness
+from y5gg.utils.loggers import Loggers
+from y5gg.utils.callbacks import Callbacks
 
 LOGGER = logging.getLogger(__name__)
 LOCAL_RANK = int(os.getenv('LOCAL_RANK', -1))  # https://pytorch.org/docs/stable/elastic/run.html

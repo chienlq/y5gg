@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from yolov5.utils.general import colorstr
+from y5gg.utils.general import colorstr
 import yaml
 
 try:

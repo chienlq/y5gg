@@ -47,11 +47,11 @@ import yaml
 from tensorflow import keras
 from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2
 
-from yolov5.models.common import Conv, Bottleneck, SPP, DWConv, Focus, BottleneckCSP, Concat, autopad, C3
-from yolov5.models.experimental import MixConv2d, CrossConv, attempt_load
-from yolov5.models.yolo import Detect
-from yolov5.utils.datasets import LoadImages
-from yolov5.utils.general import make_divisible, check_file, check_dataset,
+from y5gg.models.common import Conv, Bottleneck, SPP, DWConv, Focus, BottleneckCSP, Concat, autopad, C3
+from y5gg.models.experimental import MixConv2d, CrossConv, attempt_load
+from y5gg.models.yolo import Detect
+from y5gg.utils.datasets import LoadImages
+from y5gg.utils.general import make_divisible, check_file, check_dataset,
 
 logger = logging.getLogger(__name__)
 

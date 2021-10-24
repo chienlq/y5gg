@@ -28,9 +28,9 @@ import torchvision
 import yaml
 import sys
 
-from yolov5.utils.downloads import gsutil_getsize
-from yolov5.utils.metrics import box_iou, fitness
-from yolov5.utils.torch_utils import init_torch_seeds
+from y5gg.utils.downloads import gsutil_getsize
+from y5gg.utils.metrics import box_iou, fitness
+from y5gg.utils.torch_utils import init_torch_seeds
 
 # Settings
 torch.set_printoptions(linewidth=320, precision=5, profile='long')

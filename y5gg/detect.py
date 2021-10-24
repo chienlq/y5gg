@@ -16,12 +16,12 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 
-from yolov5.models.experimental import attempt_load
-from yolov5.utils.datasets import LoadStreams, LoadImages
-from yolov5.utils.general import check_img_size, check_requirements, check_imshow, colorstr, non_max_suppression, \
+from y5gg.models.experimental import attempt_load
+from y5gg.utils.datasets import LoadStreams, LoadImages
+from y5gg.utils.general import check_img_size, check_requirements, check_imshow, colorstr, non_max_suppression, \
     apply_classifier, scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path, save_one_box, yolov5_in_syspath
-from yolov5.utils.plots import colors, plot_one_box
-from yolov5.utils.torch_utils import select_device, load_classifier, time_sync
+from y5gg.utils.plots import colors, plot_one_box
+from y5gg.utils.torch_utils import select_device, load_classifier, time_sync
 
 
 @torch.no_grad()

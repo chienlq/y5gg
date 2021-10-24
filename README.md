@@ -3,7 +3,7 @@
 </h1>
 
 <h4 align="center">
-  pip install yolov5
+  pip install y5gg
 </h4>
 
 <div align="center">
@@ -18,7 +18,7 @@
 ## <div align="center">Overview</div>
 
 <div align="center">
-You can finally install <a href="https://github.com/ultralytics/yolov5">YOLOv5 object detector</a> using <a href="https://pypi.org/project/yolov5/">pip</a> and integrate into your project easily.
+You can finally install <a href="https://github.com/ultralytics/yolov5">YOLOv5 object detector</a> using <a href="https://pypi.org/project/y5gg/">pip</a> and integrate into your project easily.
 </p>
 <img src="https://user-images.githubusercontent.com/26833433/114313216-f0a5e100-9af5-11eb-8445-c682b60da2e3.png" width="1000">
 </div>

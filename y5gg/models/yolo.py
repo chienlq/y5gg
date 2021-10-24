@@ -11,12 +11,12 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
-from yolov5.models.common import *
-from yolov5.models.experimental import *
-from yolov5.utils.autoanchor import check_anchor_order
-from yolov5.utils.general import make_divisible, check_file, set_logging
-from yolov5.utils.plots import feature_visualization
-from yolov5.utils.torch_utils import time_sync, fuse_conv_and_bn, model_info, scale_img, initialize_weights, \
+from y5gg.models.common import *
+from y5gg.models.experimental import *
+from y5gg.utils.autoanchor import check_anchor_order
+from y5gg.utils.general import make_divisible, check_file, set_logging
+from y5gg.utils.plots import feature_visualization
+from y5gg.utils.torch_utils import time_sync, fuse_conv_and_bn, model_info, scale_img, initialize_weights, \
     select_device, copy_attr
 
 try:

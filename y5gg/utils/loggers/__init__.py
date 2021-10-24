@@ -9,11 +9,11 @@ from threading import Thread
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
-from yolov5.utils.general import colorstr, emojis
-from yolov5.utils.loggers.wandb.wandb_utils import WandbLogger
-from yolov5.utils.loggers.neptune.neptune_utils import NeptuneLogger
-from yolov5.utils.plots import plot_images, plot_results
-from yolov5.utils.torch_utils import de_parallel
+from y5gg.utils.general import colorstr, emojis
+from y5gg.utils.loggers.wandb.wandb_utils import WandbLogger
+from y5gg.utils.loggers.neptune.neptune_utils import NeptuneLogger
+from y5gg.utils.plots import plot_images, plot_results
+from y5gg.utils.torch_utils import de_parallel
 
 LOGGERS = ('csv', 'tb', 'wandb', 'neptune')  # text-file, TensorBoard, Weights & Biases
 

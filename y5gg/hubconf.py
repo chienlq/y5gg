@@ -27,11 +27,11 @@ def _create(name, pretrained=True, channels=3, classes=80, autoshape=True, verbo
     """
     from pathlib import Path
 
-    from yolov5.models.yolo import Model
-    from yolov5.models.experimental import attempt_load
-    from yolov5.utils.general import check_requirements, set_logging, yolov5_in_syspath
-    from yolov5.utils.downloads import attempt_download
-    from yolov5.utils.torch_utils import select_device
+    from y5gg.models.yolo import Model
+    from y5gg.models.experimental import attempt_load
+    from y5gg.utils.general import check_requirements, set_logging, yolov5_in_syspath
+    from y5gg.utils.downloads import attempt_download
+    from y5gg.utils.torch_utils import select_device
 
     #file = Path(__file__).absolute()
     #check_requirements(requirements=file.parent / 'requirements.txt', exclude=('tensorboard', 'thop', 'opencv-python'))

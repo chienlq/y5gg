@@ -17,14 +17,14 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-from yolov5.models.experimental import attempt_load
-from yolov5.utils.datasets import create_dataloader
-from yolov5.utils.general import coco80_to_coco91_class, check_dataset, check_file, check_img_size, check_requirements, \
+from y5gg.models.experimental import attempt_load
+from y5gg.utils.datasets import create_dataloader
+from y5gg.utils.general import coco80_to_coco91_class, check_dataset, check_file, check_img_size, check_requirements, \
     box_iou, non_max_suppression, scale_coords, xyxy2xywh, xywh2xyxy, set_logging, increment_path, colorstr
-from yolov5.utils.metrics import ap_per_class, ConfusionMatrix
-from yolov5.utils.plots import plot_images, output_to_target, plot_study_txt
-from yolov5.utils.torch_utils import select_device, time_sync
-from yolov5.utils.callbacks import Callbacks
+from y5gg.utils.metrics import ap_per_class, ConfusionMatrix
+from y5gg.utils.plots import plot_images, output_to_target, plot_study_txt
+from y5gg.utils.torch_utils import select_device, time_sync
+from y5gg.utils.callbacks import Callbacks
 
 
 def save_one_txt(predn, save_conf, shape, file):

@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from yolov5.models.yolo import Model
-from yolov5.utils.general import set_logging, yolov5_in_syspath
-from yolov5.utils.google_utils import attempt_download
-from yolov5.utils.torch_utils import torch
+from y5gg.models.yolo import Model
+from y5gg.utils.general import set_logging, yolov5_in_syspath
+from y5gg.utils.google_utils import attempt_download
+from y5gg.utils.torch_utils import torch
 
 
 def load_model(model_path, device=None, autoshape=True, verbose=False):
@@ -21,7 +21,7 @@ def load_model(model_path, device=None, autoshape=True, verbose=False):
     Returns:
         pytorch model
 
-    (Adapted from yolov5.hubconf.create)
+    (Adapted from y5gg.hubconf.create)
     """
     # set logging
     set_logging(verbose=verbose)
@@ -67,7 +67,7 @@ class YOLOv5:
         """
         Perform yolov5 prediction using loaded model weights.
 
-        Returns results as a yolov5.models.common.Detections object.
+        Returns results as a y5gg.models.common.Detections object.
         """
         assert self.model is not None, "before predict, you need to call .load_model()"
         results = self.model(imgs=image_list, size=size, augment=augment)
