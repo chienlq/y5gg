@@ -1,8 +1,10 @@
 from pathlib import Path
 
 from y5gg.models.yolo import Model
+from y5gg.models.experimental import attempt_load
 from y5gg.utils.general import set_logging, yolov5_in_syspath
 from y5gg.utils.google_utils import attempt_download
+from y5gg.utils.torch_utils import select_device
 from y5gg.utils.torch_utils import torch
 
 
@@ -13,7 +15,7 @@ def load_model(model_path, device=None, autoshape=True, verbose=False):
     Arguments:
         model_path (str): path of the model
         config_path (str): path of the config file
-        device (str): select device that model will be loaded (cpu, cuda)
+        device (str): select device that model will be loaded (cuda device, i.e. 0 or 0,1,2,3 or cpu)
         pretrained (bool): load pretrained weights into the model
         autoshape (bool): make model ready for inference
         verbose (bool): if False, yolov5 logs will be silent
@@ -27,23 +29,28 @@ def load_model(model_path, device=None, autoshape=True, verbose=False):
     set_logging(verbose=verbose)
 
     # set device if not given
-    if not device:
+    if device is None:
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    device = select_device(device)
 
     attempt_download(model_path)  # download if not found locally
     with yolov5_in_syspath():
-        model = torch.load(model_path, map_location=torch.device(device))
+        #model = torch.load(model_path, map_location=torch.device(device))
+        model = torch.load(model_path, map_location=device)
     if isinstance(model, dict):
         model = model["model"]  # load model
-    hub_model = Model(model.yaml).to(next(model.parameters()).device)  # create
-    hub_model.load_state_dict(model.float().state_dict())  # load state_dict
+    hub_model = Model(model.yaml)  # create
+    msd = model.state_dict()  # model state_dict
+    csd = model.float().state_dict()  # checkpoint state_dict as FP32
+    csd = {k: v for k, v in csd.items() if msd[k].shape == v.shape}  # filter
+    hub_model.load_state_dict(csd, strict=False)  # load
     hub_model.names = model.names  # class names
     model = hub_model
 
     if autoshape:
         model = model.autoshape()
 
-    return model
+    return model.to(device)
 
 
 class YOLOv5:

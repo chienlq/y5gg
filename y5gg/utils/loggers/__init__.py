@@ -3,9 +3,11 @@
 Logging utils
 """
 
+import os
 import warnings
 from threading import Thread
 
+import pkg_resources as pkg
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
@@ -16,11 +18,16 @@ from y5gg.utils.plots import plot_images, plot_results
 from y5gg.utils.torch_utils import de_parallel
 
 LOGGERS = ('csv', 'tb', 'wandb', 'neptune')  # text-file, TensorBoard, Weights & Biases
+RANK = int(os.getenv('RANK', -1))
 
 try:
     import wandb
 
     assert hasattr(wandb, '__version__')  # verify package import not local dir
+    if pkg.parse_version(wandb.__version__) >= pkg.parse_version('0.12.2') and RANK in [0, -1]:
+        wandb_login_success = wandb.login(timeout=30)
+        if not wandb_login_success:
+            wandb = None
 except (ImportError, AssertionError):
     wandb = None
 
@@ -29,10 +36,9 @@ try:
 except ImportError:
     neptune = None
 
-
 class Loggers():
     # YOLOv5 Loggers class
-    def __init__(self, save_dir=None, weights=None, opt=None, hyp=None, logger=None, include=LOGGERS, mmdet_keys=False):
+    def __init__(self, save_dir=None, weights=None, opt=None, hyp=None, logger=None, include=LOGGERS, mmdet_keys=False, class_names=None):
         self.save_dir = save_dir
         self.weights = weights
         self.opt = opt
@@ -52,6 +58,11 @@ class Loggers():
         for k in LOGGERS:
             setattr(self, k, None)  # init empty logger dictionary
         self.csv = True  # always log to csv
+        self.class_names = class_names
+        if not mmdet_keys:
+            self.class_name_keys = ['metrics/' + name + '_mAP_50' for name in class_names]
+        else:
+            self.class_name_keys = ['val/' + name + '_mAP_50' for name in class_names]
 
         # Message
         if not wandb:
@@ -92,13 +103,14 @@ class Loggers():
         if self.wandb:
             self.wandb.log({"Labels": [wandb.Image(str(x), caption=x.name) for x in paths]})
 
-    def on_train_batch_end(self, ni, model, imgs, targets, paths, plots):
+    def on_train_batch_end(self, ni, model, imgs, targets, paths, plots, sync_bn):
         # Callback runs on train batch end
         if plots:
             if ni == 0:
-                with warnings.catch_warnings():
-                    warnings.simplefilter('ignore')  # suppress jit trace warning
-                    self.tb.add_graph(torch.jit.trace(de_parallel(model), imgs[0:1], strict=False), [])
+                if not sync_bn:  # tb.add_graph() --sync known issue https://github.com/ultralytics/yolov5/issues/3754
+                    with warnings.catch_warnings():
+                        warnings.simplefilter('ignore')  # suppress jit trace warning
+                        self.tb.add_graph(torch.jit.trace(de_parallel(model), imgs[0:1], strict=False), [])
             if ni < 3:
                 f = self.save_dir / f'train_batch{ni}.jpg'  # filename
                 Thread(target=plot_images, args=(imgs, targets, paths, f), daemon=True).start()
@@ -110,7 +122,7 @@ class Loggers():
         # Callback runs on train epoch end
         if self.wandb:
             self.wandb.current_epoch = epoch + 1
-        if self.neptune:
+        if self.neptune and self.neptune.neptune_run:
             self.neptune.current_epoch = epoch + 1
 
     def on_val_image_end(self, pred, predn, path, names, im):
@@ -126,11 +138,11 @@ class Loggers():
 
     def on_fit_epoch_end(self, vals, epoch, best_fitness, fi):
         # Callback runs at the end of each fit (train+val) epoch
-        x = {k: v for k, v in zip(self.keys, vals)}  # dict
+        x = {k: v for k, v in zip(self.keys + self.class_name_keys, vals)}  # dict
         if self.csv:
             file = self.save_dir / 'results.csv'
             n = len(x) + 1  # number of cols
-            s = '' if file.exists() else (('%20s,' * n % tuple(['epoch'] + self.keys)).rstrip(',') + '\n')  # add header
+            s = '' if file.exists() else (('%20s,' * n % tuple(['epoch'] + self.keys + self.class_name_keys)).rstrip(',') + '\n')  # add header
             with open(file, 'a') as f:
                 f.write(s + ('%20.5g,' * n % tuple([epoch] + vals)).rstrip(',') + '\n')
 
@@ -142,7 +154,7 @@ class Loggers():
             self.wandb.log(x)
             self.wandb.end_epoch(best_result=best_fitness == fi)
 
-        if self.neptune:
+        if self.neptune and self.neptune.neptune_run:
             self.neptune.log(x)
             self.neptune.end_epoch()
 
@@ -152,28 +164,36 @@ class Loggers():
             if ((epoch + 1) % self.opt.save_period == 0 and not final_epoch) and self.opt.save_period != -1:
                 self.wandb.log_model(last.parent, self.opt, epoch, fi, best_model=best_fitness == fi)
 
-    def on_train_end(self, last, best, plots, epoch):
+    def on_train_end(self, last, best, plots, epoch, results):
         # Callback runs on training end
         if plots:
             plot_results(file=self.save_dir / 'results.csv')  # save results.png
-        files = ['results.png', 'confusion_matrix.png', *[f'{x}_curve.png' for x in ('F1', 'PR', 'P', 'R')]]
+        files = ['results.png', 'confusion_matrix.png', *[f'{x}_curve.png' for x in ('F1', 'PR', 'P', 'R')], "results.html"]
         files = [(self.save_dir / f) for f in files if (self.save_dir / f).exists()]  # filter
 
         if self.tb:
-            from PIL import Image
-            import numpy as np
+            import cv2
             for f in files:
-                self.tb.add_image(f.stem, np.asarray(Image.open(f)), epoch, dataformats='HWC')
+                if f.name != "results.html":
+                    self.tb.add_image(f.stem, cv2.imread(str(f))[..., ::-1], epoch, dataformats='HWC')
 
         if self.wandb:
             self.wandb.log({"Results": [wandb.Image(str(f), caption=f.name) for f in files]})
             # Calling wandb.log. TODO: Refactor this into WandbLogger.log_model
-            wandb.log_artifact(str(best if best.exists() else last), type='model',
-                               name='run_' + self.wandb.wandb_run.id + '_model',
-                               aliases=['latest', 'best', 'stripped'])
-            self.wandb.finish_run()
+            if not self.opt.evolve:
+                wandb.log_artifact(str(best if best.exists() else last), type='model',
+                                   name='run_' + self.wandb.wandb_run.id + '_model',
+                                   aliases=['latest', 'best', 'stripped'])
+                self.wandb.finish_run()
+            else:
+                self.wandb.finish_run()
+                self.wandb = WandbLogger(self.opt)
 
-        if self.neptune:
+        if self.neptune and self.neptune.neptune_run:
             for f in files:
-                self.neptune.neptune_run['Results/{}'.format(f)].log(neptune.types.File(str(f)))
+                if f.name == "results.html":
+                    self.neptune.neptune_run['Results/{}'.format(f)].upload(neptune.types.File(str(f)))
+                else:
+                    self.neptune.neptune_run['Results/{}'.format(f)].log(neptune.types.File(str(f)))
+
             self.neptune.finish_run()
